@@ -5,17 +5,18 @@ import net.Role;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class Field {
     private Config config;
 
     private HashMap<String, Integer> nameId = new HashMap<>();
-    private ArrayList<Snake> aliveSnakes;
+    private List<Snake> aliveSnakes;
     private Snake mySnake;
     private int nextId = 0;
 
-    private ArrayList<Point> eatPoints;
+    private List<Point> eatPoints;
 
     private int width;
     private int height;
@@ -42,11 +43,11 @@ public class Field {
     }
 
 
-    public ArrayList<Snake> getAliveSnakes() {
+    public List<Snake> getAliveSnakes() {
         return aliveSnakes;
     }
 
-    public ArrayList<Point> getEatPoints() {
+    public List<Point> getEatPoints() {
         return eatPoints;
     }
 
@@ -155,10 +156,10 @@ public class Field {
         deathSnakes.clear();
     }
 
-    private Point[] findPosForNewSnake() {
-        Point[] points = new Point[2];
-        points[0] = new Point(5, 5);
-        points[1] = new Point(5, 4);
+    private List<Point> findPosForNewSnake() {
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(5, 5));
+        points.add(new Point(5, 4));
         return points;
     }
 
@@ -173,7 +174,15 @@ public class Field {
             thisNode.sendChanges();
     }
 
+    public void setEatPoints(List<Point> food) {
+        eatPoints = food;
+    }
+
     public Config getConfig() {
         return config;
+    }
+
+    public void addSnakes(List<Snake> snakes) {
+        aliveSnakes = snakes;
     }
 }

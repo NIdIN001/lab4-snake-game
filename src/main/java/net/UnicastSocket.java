@@ -5,24 +5,17 @@ import java.io.IOException;
 import java.net.*;
 
 public class UnicastSocket implements Runnable {
+    private final int BufferSize = 2048;
+
     private DatagramSocket socket;
     private InetAddress groupAddr;
     private int port;
 
     private QueueMsg queueMsgToHandle;
 
-    public int getSeq() {
-        return MessagesCounter.next();
-    }
-
-    private MessagesCounter counter;
-    private int stateOrder;
-
     public UnicastSocket(String ip, int port, QueueMsg queueMsgToHandle) {
         this.queueMsgToHandle = queueMsgToHandle;
         this.port = port;
-        stateOrder = 1;
-        counter = new MessagesCounter();
 
         try {
             socket = new DatagramSocket();
@@ -36,8 +29,6 @@ public class UnicastSocket implements Runnable {
 
         try {
             socket.send(new DatagramPacket(bytes, bytes.length, groupAddr, port));
-            //System.out.println("send: " + bytes.length + " bytes to " + groupAddr.getHostName() + ":" + port + "I: " + socket.getLocalPort());
-
         } catch (IOException e) {
             System.out.println("can't send invite message because что-то пошло не так");
         }
@@ -48,21 +39,24 @@ public class UnicastSocket implements Runnable {
 
         try {
             socket.send(new DatagramPacket(bytes, bytes.length, to.getAddress(), to.getPort()));
-            //System.out.println("send: " + bytes.length + " bytes to " + to.getHostName() + ":" + to.getPort());
         } catch (IOException e) {
             System.out.println("can't send message because что-то пошло не так");
         }
     }
 
+    public int getSeq() {
+        return MessagesCounter.next();
+    }
+
     @Override
     public void run() {
-        byte[] buffer = new byte[2048];
+        byte[] buffer = new byte[BufferSize];
         System.out.println("listen on " + socket.getLocalPort());
 
         DatagramPacket dgram = new DatagramPacket(buffer, buffer.length);
         while (true) {
             try {
-                socket.receive(dgram); // blocks until a datagram is received
+                socket.receive(dgram);
 
                 byte[] buf = new byte[dgram.getLength()];
                 System.arraycopy(dgram.getData(), 0, buf, 0, dgram.getLength());
@@ -73,7 +67,7 @@ public class UnicastSocket implements Runnable {
                 exception.printStackTrace();
             }
 
-            dgram.setLength(buffer.length); // must reset length field!
+            dgram.setLength(buffer.length);
         }
     }
 }

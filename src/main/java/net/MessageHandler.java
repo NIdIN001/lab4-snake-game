@@ -1,10 +1,14 @@
 package net;
 
 import game.Direction;
+import game.Point;
+import game.Snake;
 import snakes.Snakes;
 import view.AvailableGamesList;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageHandler implements Runnable {
     private QueueMsg messages;
@@ -15,6 +19,19 @@ public class MessageHandler implements Runnable {
         this.node = node;
         this.messages = messages;
         this.gamesList = gamesList;
+    }
+
+    private Point convertPointFormat(Snakes.GameState.Coord p) {
+        return new Point(p.getY(), p.getX());
+    }
+
+    private Direction convertDirectionFormat(Snakes.Direction dir) {
+        return switch (dir) {
+            case LEFT -> Direction.LEFT;
+            case UP -> Direction.UP;
+            case DOWN -> Direction.DOWN;
+            case RIGHT -> Direction.RIGHT;
+        };
     }
 
     @Override
@@ -53,7 +70,30 @@ public class MessageHandler implements Runnable {
                     case STATE -> {
                         var stateMessage = message.getState().getState();
 
+                        List<Snakes.GameState.Coord> food = stateMessage.getFoodsList();
+                        List<Point> foodPoints = new ArrayList<>();
+
+                        for (Snakes.GameState.Coord p : food) {
+                            foodPoints.add(new Point(p.getY(), p.getX()));
+                        }
+
+                        node.getField().setEatPoints(foodPoints);
+
+                        List<Snakes.GameState.Snake> snakes = stateMessage.getSnakesList();
+                        List<Snake> snakesList = new ArrayList<>();
+
+                        for (Snakes.GameState.Snake s : snakes) {
+                            List<Point> body = s.getPointsList()
+                                    .stream()
+                                    .map(this::convertPointFormat)
+                                    .toList();
+
+                            snakesList.add(new Snake(body, convertDirectionFormat(s.getHeadDirection()), node.getField(), s.getPlayerId()));
+                        }
+
+                        node.getField().addSnakes(snakesList);
                     }
+
                     case ROLE_CHANGE -> {
                         var roleMessage = message.getRoleChange();
 
@@ -68,7 +108,7 @@ public class MessageHandler implements Runnable {
                         System.out.println("get steer from id:" + id);
                         var snakes = node.getField().getAliveSnakes();
                         System.out.println("ensable snakes: ");
-                        for (var s : snakes){
+                        for (var s : snakes) {
                             System.out.println(s.getPlayerId());
                         }
                         node.getField().setDirectionToSnake(id, switch (msg.getDirection()) {

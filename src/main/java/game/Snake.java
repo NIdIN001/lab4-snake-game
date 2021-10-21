@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Snake {
     private final int DefaultLength = 2;
@@ -15,13 +16,10 @@ public class Snake {
     private final int playerId;
 
     /* координата головы - points[0] */
-    private final ArrayList<Point> body;
+    private List<Point> body;
     private final Field field;
 
-    public Snake(Point[] beginPos, Direction beginDir, Field field, int id) throws IllegalArgumentException {
-        if (beginPos.length != DefaultLength)
-            throw new IllegalArgumentException("When you are creating new snake, it's length must be " + DefaultLength);
-
+    public Snake(List<Point> beginPos, Direction beginDir, Field field, int id) {
         score = 0;
         body = new ArrayList<>();
 
@@ -29,8 +27,9 @@ public class Snake {
         this.field = field;
         this.direction = beginDir;
         this.newDirection = beginDir;
-        this.body.add(beginPos[0]);
-        this.body.add(beginPos[1]);
+
+        this.body = beginPos;
+
         this.state = SnakeState.ALIVE;
     }
 
@@ -84,7 +83,7 @@ public class Snake {
         return body.get(Head);
     }
 
-    public ArrayList<Point> getBody() {
+    public List<Point> getBody() {
         return body;
     }
 

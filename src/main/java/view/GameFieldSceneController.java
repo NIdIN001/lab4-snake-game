@@ -25,10 +25,7 @@ import net.Role;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /* резмер игровой области: 400 на 400 */
 public class GameFieldSceneController implements Initializable {
@@ -153,7 +150,7 @@ public class GameFieldSceneController implements Initializable {
 
     private void setSnakesColour(Color color) {
         for (Snake snake : node.getField().getAliveSnakes()) {
-            ArrayList<Point> body = snake.getBody();
+            List<Point> body = snake.getBody();
 
             for (Point p : body) {
                 rectangles[p.width][p.height].setFill(color);
