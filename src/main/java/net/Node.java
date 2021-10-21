@@ -20,7 +20,7 @@ public class Node {
 
     private InetSocketAddress remoteServer;
 
-    private NetSocket senderSocket;
+    private UnicastSocket senderSocket;
     private AnnouncementSocketReceiver receiverSocket;
 
     private QueueMsg msgToHandle;
@@ -58,7 +58,7 @@ public class Node {
         msgHandlerThread.setDaemon(true);
         msgHandlerThread.start();
 
-        senderSocket = new NetSocket("239.192.0.4", 4446, toHandle);
+        senderSocket = new UnicastSocket("239.192.0.4", 4446, toHandle);
 
         announceSender = new AnnounceSender(senderSocket, factory);
         announceThread = new Thread(announceSender);
@@ -121,7 +121,10 @@ public class Node {
     }
 
     public void sendChanges() {
-
+        for (Player p : playersRepository.getPlayers()) {
+            senderSocket.sendUnicast(factory.createGameStateMessage(field), new InetSocketAddress(p.getIpAddr(), p.getPort()));
+            System.out.println("Send changes to: " + p.getIpAddr() + ":" + p.getPort());
+        }
     }
 
     public void sendDirection(Direction dir) {

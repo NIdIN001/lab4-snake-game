@@ -1,13 +1,9 @@
 package view;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import game.Field;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,9 +16,7 @@ import javafx.stage.Stage;
 import net.Node;
 import net.Role;
 
-import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,8 +25,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MenuSceneController implements Initializable {
-    private Injector injector = Guice.createInjector(new BasicModule());
-
     @Inject
     private Node node;
 
@@ -51,13 +43,14 @@ public class MenuSceneController implements Initializable {
 
     @FXML
     private void newGame(ActionEvent event) throws IOException {
-        Node n = injector.getInstance(Node.class);
+        Node n = DependencyInjector.INSTANCE.injector.getInstance(Node.class);
         n.setRole(Role.MASTER);
         n.setField(new Field(node.getConfig(), node));
         n.getField().spawnMySnake(1);
+        n.getField().spawnNewEat();
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(injector::getInstance);
+        loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
 
         loader.setLocation(getClass().getResource("/" + "GameFieldScene.fxml"));
         Parent root = loader.load();
@@ -89,12 +82,11 @@ public class MenuSceneController implements Initializable {
     private void connect(ActionEvent actionEvent) {
         node.connect("stas", node.getAvailableGames().getArray().get(0));
 
-        Node n = injector.getInstance(Node.class);
-        n.setRole(Role.NORMAL);
-        n.setField(new Field(node.getConfig(), node));
+        node.setRole(Role.NORMAL);
+        node.setField(new Field(node.getConfig(), node));
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(injector::getInstance);
+        loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
 
         loader.setLocation(getClass().getResource("/" + "GameFieldScene.fxml"));
         try {

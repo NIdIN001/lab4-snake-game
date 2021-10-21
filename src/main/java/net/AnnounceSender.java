@@ -1,12 +1,14 @@
 package net;
 
+import view.DependencyInjector;
+
 public class AnnounceSender implements Runnable {
     private MessageFactory factory;
 
     private boolean isWorking = false;
-    public NetSocket socket;
+    public UnicastSocket socket;
 
-    public AnnounceSender(NetSocket socket, MessageFactory factory) {
+    public AnnounceSender(UnicastSocket socket, MessageFactory factory) {
         this.socket = socket;
         this.factory = factory;
     }
@@ -17,15 +19,16 @@ public class AnnounceSender implements Runnable {
 
     @Override
     public void run() {
+        Node node = DependencyInjector.INSTANCE.injector.getInstance(Node.class);
+
         while (true) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (isWorking)
+            if (isWorking & node.getRole() == Role.MASTER)
                 socket.sendMulticast(factory.getInviteMsg());
         }
     }
 }
-

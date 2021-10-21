@@ -46,7 +46,7 @@ public class MessageHandler implements Runnable {
                         System.out.println("get join");
                         var msg = message.getJoin();
 
-                        Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getPort(), Role.NORMAL, 0, 2);
+                        Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.NORMAL, 0, 2);
                         node.addPlayer(p, message.getSenderId());
                         node.getField().spawnNewSnake(msg.getName(), message.getSenderId());
                     }
@@ -65,6 +65,12 @@ public class MessageHandler implements Runnable {
                         System.out.println("get steer");
                         var msg = message.getSteer();
                         int id = message.getSenderId();
+                        System.out.println("get steer from id:" + id);
+                        var snakes = node.getField().getAliveSnakes();
+                        System.out.println("ensable snakes: ");
+                        for (var s : snakes){
+                            System.out.println(s.getPlayerId());
+                        }
                         node.getField().setDirectionToSnake(id, switch (msg.getDirection()) {
                             case UP -> Direction.UP;
                             case DOWN -> Direction.DOWN;

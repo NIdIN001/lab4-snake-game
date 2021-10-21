@@ -32,7 +32,7 @@ public class Field {
         this.width = config.getWidth();
         this.height = config.getHeight();
 
-        spawnNewEat();
+        //spawnNewEat();
     }
 
     public Snake findSnakeById(int id) {
@@ -143,7 +143,7 @@ public class Field {
                     System.out.println("KILL");
                     for (Snake s : aliveSnakes) {
                         if (s.getHead().isSame(head)) {
-                            s.setState(SnakeState.DEATH);
+                            s.setState(SnakeState.ZOMBIE);
                             deathSnakes.add(s);
                         }
                     }
@@ -166,11 +166,11 @@ public class Field {
         for (Snake s : aliveSnakes)
             s.move();
 
-        if (thisNode.getRole() == Role.MASTER)
-            thisNode.sendChanges();
-
         checkEat();
         checkSnakes();
+
+        if (thisNode.getRole() == Role.MASTER)
+            thisNode.sendChanges();
     }
 
     public Config getConfig() {

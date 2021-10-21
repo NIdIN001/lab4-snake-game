@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import view.BasicModule;
+import view.DependencyInjector;
 
 import java.io.IOException;
 
@@ -17,10 +18,8 @@ public class JavaFXRunner extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Injector injector = Guice.createInjector(new BasicModule());
-
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(injector::getInstance);
+        loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
 
         loader.setLocation(getClass().getResource("/" + "MenuScene.fxml"));
         Parent root = loader.load();

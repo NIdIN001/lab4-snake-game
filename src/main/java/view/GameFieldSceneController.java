@@ -1,8 +1,6 @@
 package view;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import game.*;
 
 import javafx.application.Platform;
@@ -55,10 +53,8 @@ public class GameFieldSceneController implements Initializable {
         node.sendAnnounces(false);
         node.setRole(Role.NORMAL);
 
-        Injector injector = Guice.createInjector(new BasicModule());
-
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(injector::getInstance);
+        loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
 
         loader.setLocation(getClass().getResource("/" + "MenuScene.fxml"));
         Parent root = loader.load();
@@ -174,17 +170,18 @@ public class GameFieldSceneController implements Initializable {
     public void update() {
         clearField();
 
-        node.getField().makeTurn();
+        if (node.getRole() == Role.MASTER)
+            node.getField().makeTurn();
 
         setEatColour(Color.RED);
         setSnakesColour(Color.GREEN);
 
-        if (node.getField().getMySnake() != null){
+        if (node.getField().getMySnake() != null) {
             scoreLabel.setText(String.valueOf(node.getField().getMySnake().getScore()));
         } else
             return;
 
-        if (node.getField().getMySnake().getState() == SnakeState.DEATH) {
+        if (node.getField().getMySnake().getState() == SnakeState.ZOMBIE) {
             againButton.setDisable(false);
         }
     }

@@ -10,7 +10,8 @@ public class Player {
     private PlayerType type;
     private int score;
 
-    public Player(String name, PlayerType type , int port, Role role, int score, int id) {
+    public Player(String name, PlayerType type, String ip, int port, Role role, int score, int id) {
+        this.ipAddr = ip;
         this.name = name;
         this.type = type;
         this.port = port;

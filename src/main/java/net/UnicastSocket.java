@@ -4,7 +4,7 @@ import snakes.Snakes.GameMessage;
 import java.io.IOException;
 import java.net.*;
 
-public class NetSocket implements Runnable {
+public class UnicastSocket implements Runnable {
     private DatagramSocket socket;
     private InetAddress groupAddr;
     private int port;
@@ -18,7 +18,7 @@ public class NetSocket implements Runnable {
     private MessagesCounter counter;
     private int stateOrder;
 
-    public NetSocket(String ip, int port, QueueMsg queueMsgToHandle) {
+    public UnicastSocket(String ip, int port, QueueMsg queueMsgToHandle) {
         this.queueMsgToHandle = queueMsgToHandle;
         this.port = port;
         stateOrder = 1;
@@ -50,18 +50,18 @@ public class NetSocket implements Runnable {
             socket.send(new DatagramPacket(bytes, bytes.length, to.getAddress(), to.getPort()));
             //System.out.println("send: " + bytes.length + " bytes to " + to.getHostName() + ":" + to.getPort());
         } catch (IOException e) {
-            System.out.println("can't send invite message because что-то пошло не так");
+            System.out.println("can't send message because что-то пошло не так");
         }
     }
 
     @Override
     public void run() {
         byte[] buffer = new byte[2048];
+        System.out.println("listen on " + socket.getLocalPort());
 
         DatagramPacket dgram = new DatagramPacket(buffer, buffer.length);
         while (true) {
             try {
-                System.out.println("listen on " + socket.getLocalPort());
                 socket.receive(dgram); // blocks until a datagram is received
 
                 byte[] buf = new byte[dgram.getLength()];
