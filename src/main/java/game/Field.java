@@ -4,24 +4,25 @@ import net.Node;
 import net.Role;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 public class Field {
     private Config config;
 
-    private HashMap<String, Integer> nameId = new HashMap<>();
     private List<Snake> aliveSnakes;
     private Snake mySnake;
     private int nextId = 0;
 
     private List<Point> eatPoints;
+    private int maxEatOnMap;
 
     private int width;
     private int height;
 
-    protected Node thisNode;
+    private Node thisNode;
+
+    private Random random = new Random();
 
     public Field(Config config, Node node) {
         thisNode = node;
@@ -32,8 +33,7 @@ public class Field {
 
         this.width = config.getWidth();
         this.height = config.getHeight();
-
-        //spawnNewEat();
+        this.maxEatOnMap = config.getFoodStatic();
     }
 
     public Snake findSnakeById(int id) {
@@ -73,7 +73,6 @@ public class Field {
     }
 
     public void spawnNewSnake(String name, int id) {
-        nameId.put(name, nextId);
         aliveSnakes.add(new Snake(findPosForNewSnake(), Direction.RIGHT, this, id));
     }
 
@@ -94,14 +93,21 @@ public class Field {
         snake.ifPresent(s -> s.setDirection(dir));
     }
 
+    private void spawnEatAt(int x, int y) {
+        eatPoints.add(new Point(y, x));
+    }
+
     public void spawnNewEat() {
+        if (eatPoints.size() >= maxEatOnMap)
+            return;
+
         Random r = new Random();
 
         boolean isOk;
         Point eat;
         do {
             isOk = true;
-            eat = new Point(r.nextInt(height - 1), r.nextInt(width - 1));
+            eat = new Point(r.nextInt(height), r.nextInt(width));
 
             for (Snake snake : aliveSnakes) {
                 if (snake.contains(eat)) {
@@ -153,6 +159,13 @@ public class Field {
         for (Snake deathSnake : deathSnakes)
             aliveSnakes.removeIf(snake -> snake.equals(deathSnake));
 
+        for (Snake s : deathSnakes) {
+            for (Point p : s.getBody()) {
+                if (random.nextInt(100) < (config.getDeadFoodProb() * 100)) {
+                    spawnEatAt(p.width, p.height);
+                }
+            }
+        }
         deathSnakes.clear();
     }
 

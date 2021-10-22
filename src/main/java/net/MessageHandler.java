@@ -7,7 +7,6 @@ import game.Snake;
 import snakes.Snakes;
 import view.AvailableGamesList;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,15 @@ public class MessageHandler implements Runnable {
         };
     }
 
+    private Role convertRoleFormat(Snakes.NodeRole role) {
+        return switch (role) {
+            case DEPUTY -> Role.DEPUTY;
+            case MASTER -> Role.MASTER;
+            case NORMAL -> Role.NORMAL;
+            case VIEWER -> Role.VIEWER;
+        };
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -49,7 +57,6 @@ public class MessageHandler implements Runnable {
             if (!messages.isEmpty()) {
                 Message task = messages.get().get();
                 Snakes.GameMessage message = task.message;
-                InetSocketAddress socketAddress = task.from;
 
                 switch (message.getTypeCase()) {
                     case ANNOUNCEMENT -> {
@@ -68,26 +75,22 @@ public class MessageHandler implements Runnable {
 
                         if (!gamesList.getMap().containsKey(announce.getFrom()))
                             gamesList.add(announce);
-/*
-                        for (GameAnnounce a : gamesList.getMap().values()) {
-                            if (a.equals(announce)) {
-                                return;
-                            }
-                        }
-                        gamesList.add(announce);
-
- */
                     }
                     case ACK -> {
-
+                        return;
                     }
                     case JOIN -> {
                         System.out.println("get join");
                         var msg = message.getJoin();
 
-                        Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.NORMAL, 0, 2);
+                        Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.NORMAL, 0, message.getSenderId());
                         node.addPlayer(p, message.getSenderId());
                         node.getField().spawnNewSnake(msg.getName(), message.getSenderId());
+
+                        if (node.getPlayersRepository().getPlayersNumber() == 2) {
+                            //todo дать роль заместителя 2 игроку
+                        }
+
                     }
                     case STATE -> {
                         var stateMessage = message.getState().getState();
@@ -118,11 +121,13 @@ public class MessageHandler implements Runnable {
 
                     case ROLE_CHANGE -> {
                         var roleMessage = message.getRoleChange();
+                        node.setRole(convertRoleFormat(roleMessage.getReceiverRole()));
+                    }
 
-                    }
                     case PING -> {
-                        // System.err.println("PING");
+                        node.sendAck();
                     }
+
                     case STEER -> {
                         System.out.println("get steer");
                         var msg = message.getSteer();
@@ -140,8 +145,12 @@ public class MessageHandler implements Runnable {
                             case RIGHT -> Direction.RIGHT;
                         });
                     }
-
-
+                    case ERROR -> {
+                        return;
+                    }
+                    case TYPE_NOT_SET -> {
+                        return;
+                    }
                 }
             }
         }

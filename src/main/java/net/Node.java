@@ -134,13 +134,17 @@ public class Node {
 
     public void sendChanges() {
         for (Player p : playersRepository.getPlayers()) {
-            senderSocket.sendUnicast(factory.createGameStateMessage(field), new InetSocketAddress(p.getIpAddr(), p.getPort()));
+            senderSocket.sendUnicast(factory.createGameStateMessage(field, p.getId()), new InetSocketAddress(p.getIpAddr(), p.getPort()));
             System.out.println("Send changes to: " + p.getIpAddr() + ":" + p.getPort());
         }
     }
 
     public void sendDirection(Direction dir) {
         senderSocket.sendUnicast(factory.createSteerMessage(dir), remoteServer);
+    }
+
+    public void sendAck() {
+        senderSocket.sendUnicast(factory.createAck(), remoteServer);
     }
 
     public PlayersRepository getPlayersRepository() {

@@ -88,7 +88,7 @@ public class MessageFactory {
                 .build();
     }
 
-    public Snakes.GameMessage createGameStateMessage(Field field) {
+    public Snakes.GameMessage createGameStateMessage(Field field, int receiverId) {
         var snakes = field.getAliveSnakes().stream().map(
                 snake -> Snakes.GameState.Snake.newBuilder()
                         .setState(switch (snake.getState()) {
@@ -137,7 +137,7 @@ public class MessageFactory {
         //fixme save remote config
         return Snakes.GameMessage.newBuilder()
                 .setSenderId(node.getNodeId())
-                .setReceiverId(1000)
+                .setReceiverId(receiverId)
                 .setMsgSeq(MessagesCounter.next())
                 .setState(Snakes.GameMessage.StateMsg.newBuilder()
                         .setState(Snakes.GameState.newBuilder()
@@ -149,6 +149,16 @@ public class MessageFactory {
                         .build())
                 .build();
     }
+
+    public Snakes.GameMessage createAck() {
+        Snakes.GameMessage.AckMsg msg = Snakes.GameMessage.AckMsg.newBuilder()
+                .build();
+
+        return Snakes.GameMessage.newBuilder()
+                .setAck(msg)
+                .build();
+    }
+
 
     private Snakes.GameState.Coord coord(int x, int y) {
         return Snakes.GameState.Coord.newBuilder().setX(x).setY(y).build();

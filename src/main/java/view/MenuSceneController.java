@@ -44,11 +44,12 @@ public class MenuSceneController implements Initializable {
 
     @FXML
     private void newGame(ActionEvent event) throws IOException {
-        Node n = DependencyInjector.INSTANCE.injector.getInstance(Node.class);
-        n.setRole(Role.MASTER);
-        n.setField(new Field(node.getConfig(), node));
-        n.getField().spawnMySnake(1);
-        n.getField().spawnNewEat();
+        //Node n = DependencyInjector.INSTANCE.injector.getInstance(Node.class);
+        node.setRole(Role.MASTER);
+        node.setField(new Field(node.getConfig(), node));
+        node.getField().spawnMySnake(1);
+        for (int i = 0; i < node.getConfig().getFoodStatic(); i++)
+            node.getField().spawnNewEat();
 
         FXMLLoader loader = new FXMLLoader();
         loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
