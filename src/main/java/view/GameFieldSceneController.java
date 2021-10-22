@@ -3,6 +3,9 @@ package view;
 import com.google.inject.Inject;
 import game.*;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import net.Node;
 import net.Role;
 
@@ -45,8 +49,11 @@ public class GameFieldSceneController implements Initializable {
 
     private Rectangle[][] rectangles;
 
+    private Timer timer;
+
     @FXML
     private void exit(ActionEvent action) throws IOException {
+        timer.cancel();
         node.sendAnnounces(false);
         node.setRole(Role.NORMAL);
 
@@ -130,7 +137,8 @@ public class GameFieldSceneController implements Initializable {
         againButton.setDisable(true);
 
         //fixme возможно это порочная практика и мне нужно по честному созвавать треды и убивать их при надобности
-        new Timer().schedule(new TimerTask() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> update());

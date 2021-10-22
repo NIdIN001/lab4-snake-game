@@ -74,4 +74,36 @@ public class Config {
     public int getNodeTimeoutMs() {
         return nodeTimeoutMs;
     }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setFoodStatic(int foodStatic) {
+        this.foodStatic = foodStatic;
+    }
+
+    public void setFoodPerPlayer(int foodPerPlayer) {
+        this.foodPerPlayer = foodPerPlayer;
+    }
+
+    public void setStateDelayMs(int stateDelayMs) {
+        this.stateDelayMs = stateDelayMs;
+    }
+
+    public void setDeadFoodProb(float deadFoodProb) {
+        this.deadFoodProb = deadFoodProb;
+    }
+
+    public void setPingDelayMs(int pingDelayMs) {
+        this.pingDelayMs = pingDelayMs;
+    }
+
+    public void setNodeTimeoutMs(int nodeTimeoutMs) {
+        this.nodeTimeoutMs = nodeTimeoutMs;
+    }
 }

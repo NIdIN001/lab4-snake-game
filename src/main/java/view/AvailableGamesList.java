@@ -1,24 +1,27 @@
 package view;
 
+import net.GameAnnounce;
+
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AvailableGamesList {
-    private ArrayList<InetSocketAddress> games = new ArrayList<>();
+    private HashMap<InetSocketAddress, GameAnnounce> games = new HashMap<>();
 
-    public void add(InetSocketAddress game) {
-        games.add(game);
+    public void add(GameAnnounce game) {
+        games.put(game.getFrom(), game);
     }
 
-    public void remove(InetSocketAddress game) {
-        games.remove(game);
+    public void remove(GameAnnounce game) {
+        games.remove(game.getFrom());
     }
 
     public void reset() {
         games.clear();
     }
 
-    public ArrayList<InetSocketAddress> getArray() {
+    public HashMap<InetSocketAddress, GameAnnounce> getMap() {
         return games;
     }
 }

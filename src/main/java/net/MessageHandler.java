@@ -1,5 +1,6 @@
 package net;
 
+import game.Config;
 import game.Direction;
 import game.Point;
 import game.Snake;
@@ -53,8 +54,29 @@ public class MessageHandler implements Runnable {
                 switch (message.getTypeCase()) {
                     case ANNOUNCEMENT -> {
                         var msg = message.getAnnouncement();
-                        if (!gamesList.getArray().contains(task.from))
-                            gamesList.add(task.from);
+                        Config cfg = new Config();
+                        cfg.setDeadFoodProb(msg.getConfig().getDeadFoodProb());
+                        cfg.setFoodStatic(msg.getConfig().getFoodStatic());
+                        cfg.setNodeTimeoutMs(msg.getConfig().getNodeTimeoutMs());
+                        cfg.setFoodPerPlayer(msg.getConfig().getFoodStatic());
+                        cfg.setPingDelayMs(msg.getConfig().getPingDelayMs());
+                        cfg.setHeight(msg.getConfig().getHeight());
+                        cfg.setWidth(msg.getConfig().getWidth());
+                        cfg.setStateDelayMs(msg.getConfig().getStateDelayMs());
+
+                        GameAnnounce announce = new GameAnnounce(task.from, cfg);
+
+                        if (!gamesList.getMap().containsKey(announce.getFrom()))
+                            gamesList.add(announce);
+/*
+                        for (GameAnnounce a : gamesList.getMap().values()) {
+                            if (a.equals(announce)) {
+                                return;
+                            }
+                        }
+                        gamesList.add(announce);
+
+ */
                     }
                     case ACK -> {
 

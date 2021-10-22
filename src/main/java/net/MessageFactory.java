@@ -75,14 +75,14 @@ public class MessageFactory {
         return Snakes.GameMessage.newBuilder()
                 .setSteer(msg)
                 .setMsgSeq(MessagesCounter.next())
-                .setSenderId(1000)
+                .setSenderId(node.getNodeId())
                 .build();
     }
 
-    public Snakes.GameMessage createJoinMessage(int senderId, int receiverId, String playerName) {
+    public Snakes.GameMessage createJoinMessage(int receiverId, String playerName) {
         return Snakes.GameMessage.newBuilder()
                 .setMsgSeq(MessagesCounter.next())
-                .setSenderId(senderId)
+                .setSenderId(node.getNodeId())
                 .setReceiverId(receiverId)
                 .setJoin(Snakes.GameMessage.JoinMsg.newBuilder().setName(playerName).build())
                 .build();
@@ -136,7 +136,7 @@ public class MessageFactory {
 
         //fixme save remote config
         return Snakes.GameMessage.newBuilder()
-                .setSenderId(0)
+                .setSenderId(node.getNodeId())
                 .setReceiverId(1000)
                 .setMsgSeq(MessagesCounter.next())
                 .setState(Snakes.GameMessage.StateMsg.newBuilder()

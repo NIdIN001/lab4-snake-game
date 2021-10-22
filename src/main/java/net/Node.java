@@ -7,12 +7,21 @@ import game.Field;
 import view.AvailableGamesList;
 
 import java.net.InetSocketAddress;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.random.RandomGenerator;
 
 public class Node {
     private final int Port = 4446;
     private final String InetAddr = "239.192.0.4";
 
     private Role role;
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    private int nodeId;
 
     private Config config;
 
@@ -44,6 +53,9 @@ public class Node {
         config = cfg;
         isInGame = false;
         role = Role.NORMAL;
+
+        nodeId = Math.abs(ThreadLocalRandom.current().nextInt());
+        System.out.println(nodeId);
 
         factory = new MessageFactory(this);
         availableGames = new AvailableGamesList();
@@ -113,7 +125,7 @@ public class Node {
 
     public void connect(String name, InetSocketAddress to) {
         remoteServer = new InetSocketAddress(to.getAddress(), to.getPort());
-        senderSocket.sendUnicast(factory.createJoinMessage(1000, 0, name), to);
+        senderSocket.sendUnicast(factory.createJoinMessage(0, name), to);
     }
 
     public void addPlayer(Player player, int id) {

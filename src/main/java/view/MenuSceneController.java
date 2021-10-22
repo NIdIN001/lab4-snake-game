@@ -13,13 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import net.GameAnnounce;
 import net.Node;
 import net.Role;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +40,7 @@ public class MenuSceneController implements Initializable {
     @FXML
     private TextField heightTextField;
 
-    private ArrayList<InetSocketAddress> avalGames = new ArrayList<>();
+    private Timer timer;
 
     @FXML
     private void newGame(ActionEvent event) throws IOException {
@@ -70,9 +71,9 @@ public class MenuSceneController implements Initializable {
 
     private void showAvalGames() {
         VBox.getChildren().clear();
-        avalGames.addAll(node.getAvailableGames().getArray());
-        for (InetSocketAddress addr : avalGames) {
-            Button newGame = new Button(addr.getHostName());
+
+        for (GameAnnounce announce : node.getAvailableGames().getMap().values()) {
+            Button newGame = new Button(announce.getFrom().getHostName() + ":" + announce.getFrom().getPort());
             newGame.setPrefWidth(200);
             newGame.setOnAction(this::connect);
             VBox.getChildren().add(newGame);
@@ -80,10 +81,20 @@ public class MenuSceneController implements Initializable {
     }
 
     private void connect(ActionEvent actionEvent) {
-        node.connect("stas", node.getAvailableGames().getArray().get(0));
+        Button sourceButton = (Button) actionEvent.getSource();
+        System.out.println(sourceButton.getText());
 
+        InetSocketAddress addr = new InetSocketAddress(
+                sourceButton.getText().substring(0, sourceButton.getText().lastIndexOf(":")),
+                Integer.parseInt(sourceButton.getText().substring(sourceButton.getText().lastIndexOf(":") + 1)));
+
+        node.connect("stas", addr);
         node.setRole(Role.NORMAL);
-        node.setField(new Field(node.getConfig(), node));
+        for (GameAnnounce a : node.getAvailableGames().getMap().values()) {
+            if (a.getFrom().equals(addr)) {
+                node.setField(new Field(a.getCfg(), node));
+            }
+        }
 
         FXMLLoader loader = new FXMLLoader();
         loader.setControllerFactory(DependencyInjector.INSTANCE.injector::getInstance);
@@ -105,11 +116,13 @@ public class MenuSceneController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        new Timer().schedule(new TimerTask() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Platform.runLater(() -> showAvalGames());
             }
         }, 0, 500);
+
     }
 }
