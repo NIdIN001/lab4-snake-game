@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane onKeyPressed="#keyProcessor" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GameFieldSceneController">
+   <children>
+      <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exit" text="Выйти" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Line endX="400.0" endY="400.0" startX="400.0" />
+      <GridPane fx:id="gameGrid" gridLinesVisible="true" maxWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" />
+      <Label text="Ваш счет: " AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0" />
+      <Label fx:id="scoreLabel" prefHeight="17.0" prefWidth="44.0" text="9999" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0" />
+      <Button fx:id="againButton" mnemonicParsing="false" onAction="#again" text="заново" AnchorPane.rightAnchor="140.0" />
+   </children>
+</AnchorPane>
