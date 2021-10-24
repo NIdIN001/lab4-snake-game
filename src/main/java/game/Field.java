@@ -70,11 +70,10 @@ public class Field {
     }
 
     public void setDirectionToSnake(int snakeId, Direction dir) {
-        var snake = aliveSnakes.stream()
-                .filter(s -> s.getPlayerId() == snakeId)
-                .findFirst();
+        Snake snake = findSnakeById(snakeId);
 
-        snake.ifPresent(s -> s.setDirection(dir));
+        if (snake != null)
+            snake.setDirection(dir);
     }
 
     private void spawnEatAt(int x, int y) {

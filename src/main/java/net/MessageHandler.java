@@ -107,6 +107,7 @@ public class MessageHandler implements Runnable {
                             break;
 
                         var stateMessage = message.getState().getState();
+                        node.getPlayersRepository().clear();
                         node.getPlayersRepository().addPlayer(new Player("admin", PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.MASTER, 0, message.getSenderId()), message.getSenderId());
                         node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
 

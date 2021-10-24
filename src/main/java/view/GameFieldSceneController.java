@@ -76,7 +76,6 @@ public class GameFieldSceneController implements Initializable {
     private void keyProcessor(KeyEvent event) {
         if (event.getCode().equals(KeyCode.W)) {
             if (node.getRole() == Role.MASTER)
-                //node.getField().setDirectionToMySnake(Direction.UP);
                 node.getField().setDirectionToSnake(node.getNodeId(), Direction.UP);
             else
                 node.sendDirection(Direction.UP);
@@ -84,7 +83,6 @@ public class GameFieldSceneController implements Initializable {
 
         if (event.getCode().equals(KeyCode.A)) {
             if (node.getRole() == Role.MASTER)
-                //node.getField().setDirectionToMySnake(Direction.LEFT);
                 node.getField().setDirectionToSnake(node.getNodeId(), Direction.LEFT);
             else
                 node.sendDirection(Direction.LEFT);
@@ -92,7 +90,6 @@ public class GameFieldSceneController implements Initializable {
 
         if (event.getCode().equals(KeyCode.S)) {
             if (node.getRole() == Role.MASTER)
-                // node.getField().setDirectionToMySnake(Direction.DOWN);
                 node.getField().setDirectionToSnake(node.getNodeId(), Direction.DOWN);
             else
                 node.sendDirection(Direction.DOWN);
@@ -100,7 +97,6 @@ public class GameFieldSceneController implements Initializable {
 
         if (event.getCode().equals(KeyCode.D)) {
             if (node.getRole() == Role.MASTER)
-                //node.getField().setDirectionToMySnake(Direction.RIGHT);
                 node.getField().setDirectionToSnake(node.getNodeId(), Direction.RIGHT);
             else
                 node.sendDirection(Direction.RIGHT);
@@ -185,13 +181,13 @@ public class GameFieldSceneController implements Initializable {
         setEatColour(Color.RED);
         setSnakesColour(Color.GREEN);
 
-        if (node.getField().findSnakeById(node.getNodeId()) != null) {
+        if (node.getRole() == Role.MASTER) {
+            System.out.println("Players: " + node.getPlayersRepository().getPlayersNumber());
             scoreLabel.setText(String.valueOf(node.getField().findSnakeById(node.getNodeId()).getScore()));
-        } else
-            return;
 
-        if (node.getField().findSnakeById(node.getNodeId()).getState() == SnakeState.ZOMBIE) {
-            againButton.setDisable(false);
+            if (node.getField().findSnakeById(node.getNodeId()).getState() == SnakeState.ZOMBIE) {
+                againButton.setDisable(false);
+            }
         }
     }
 }

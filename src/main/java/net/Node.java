@@ -164,6 +164,10 @@ public class Node {
         return playersRepository;
     }
 
+    public void clear(){
+        playersRepository.clear();
+    }
+
     public int getRemoteServerId() {
         return remoteServerId;
     }

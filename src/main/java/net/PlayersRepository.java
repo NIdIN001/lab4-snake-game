@@ -47,4 +47,9 @@ public class PlayersRepository {
     public int getPlayersNumber() {
         return playersNumber;
     }
+
+    public void clear(){
+        playersNumber = 0;
+        playersMap.clear();
+    }
 }
