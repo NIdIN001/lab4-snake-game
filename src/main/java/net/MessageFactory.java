@@ -39,11 +39,12 @@ public class MessageFactory {
         return Snakes.GameMessage.newBuilder()
                 .setMsgSeq(MessagesCounter.next())
                 .setJoin(joinMsg)
+                .setSenderId(node.getNodeId())
                 .build();
     }
 
 
-    public Snakes.GameMessage getInviteMsg() {
+    public Snakes.GameMessage createInviteMsg() {
         Snakes.GameConfig configMsg = createConfigMsg();
 
         Snakes.GamePlayers players = Snakes.GamePlayers.newBuilder()
@@ -61,7 +62,7 @@ public class MessageFactory {
                 .build();
     }
 
-    public Snakes.GameMessage createSteerMessage(Direction dir) {
+    public Snakes.GameMessage createSteerMessage(Direction dir, int receiverId) {
         Snakes.GameMessage.SteerMsg msg = Snakes.GameMessage.SteerMsg.newBuilder()
                 .setDirection(switch (dir) {
                     case UP -> Snakes.Direction.UP;
@@ -75,10 +76,11 @@ public class MessageFactory {
                 .setSteer(msg)
                 .setMsgSeq(MessagesCounter.next())
                 .setSenderId(node.getNodeId())
+                .setReceiverId(receiverId)
                 .build();
     }
 
-    public Snakes.GameMessage createJoinMessage(int receiverId, String playerName) {
+    public Snakes.GameMessage createJoinMessage(String playerName, int receiverId) {
         return Snakes.GameMessage.newBuilder()
                 .setMsgSeq(MessagesCounter.next())
                 .setSenderId(node.getNodeId())
@@ -148,13 +150,27 @@ public class MessageFactory {
                 .build();
     }
 
-    public Snakes.GameMessage createAck(long seq) {
+    public Snakes.GameMessage createAck(long seq, int receiverId) {
         Snakes.GameMessage.AckMsg msg = Snakes.GameMessage.AckMsg.newBuilder()
                 .build();
 
         return Snakes.GameMessage.newBuilder()
                 .setAck(msg)
                 .setMsgSeq(seq)
+                .setSenderId(node.getNodeId())
+                .setReceiverId(receiverId)
+                .build();
+    }
+
+    public Snakes.GameMessage createPingMessage(int receiverId) {
+        Snakes.GameMessage.PingMsg msg = Snakes.GameMessage.PingMsg.newBuilder()
+                .build();
+
+        return Snakes.GameMessage.newBuilder()
+                .setPing(msg)
+                .setMsgSeq(MessagesCounter.next())
+                .setSenderId(node.getNodeId())
+                .setReceiverId(receiverId)
                 .build();
     }
 

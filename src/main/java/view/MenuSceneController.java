@@ -43,6 +43,7 @@ public class MenuSceneController implements Initializable {
 
     @FXML
     private void newGame(ActionEvent event) throws IOException {
+        node.setInGame(true);
         node.setRole(Role.MASTER);
         node.setField(new Field(node.getConfig(), node));
         node.getField().spawnMySnake(1);
@@ -80,6 +81,7 @@ public class MenuSceneController implements Initializable {
     }
 
     private void connect(ActionEvent actionEvent) {
+        node.setInGame(true);
         Button sourceButton = (Button) actionEvent.getSource();
         System.out.println(sourceButton.getText());
 
@@ -87,7 +89,7 @@ public class MenuSceneController implements Initializable {
                 sourceButton.getText().substring(0, sourceButton.getText().lastIndexOf(":")),
                 Integer.parseInt(sourceButton.getText().substring(sourceButton.getText().lastIndexOf(":") + 1)));
 
-        node.connect("stas", addr);
+        node.connect("stas", addr, node.getNodeId());
         node.setRole(Role.NORMAL);
 
         for (GameAnnounce a : node.getAvailableGames().getMap().values()) {

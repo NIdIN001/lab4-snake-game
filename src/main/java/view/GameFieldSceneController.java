@@ -20,7 +20,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import net.Node;
 import net.Role;
 
@@ -52,6 +51,7 @@ public class GameFieldSceneController implements Initializable {
     private void exit(ActionEvent action) throws IOException {
         timer.cancel();
         node.sendAnnounces(false);
+        node.setInGame(false);
         node.setRole(Role.NORMAL);
 
         FXMLLoader loader = new FXMLLoader();
@@ -169,6 +169,9 @@ public class GameFieldSceneController implements Initializable {
     }
 
     public void update() {
+        if (!node.isInGame())
+            return;
+
         clearField();
 
         if (node.getRole() == Role.MASTER)

@@ -3,27 +3,41 @@ package net;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayersRepository {
     private int playersNumber = 0;
 
-    private final Map<Integer, Player> playersMap = new HashMap<>(); // user id - player
+    private final Map<Integer, Player> playersMap = new ConcurrentHashMap<>(); // user id - player
+    private final Map<Integer, Long> lastRecvMsg = new ConcurrentHashMap<>();
 
-    public synchronized Collection<Player> getPlayers() {
+    public Collection<Player> getPlayers() {
         return playersMap.values();
     }
 
-    public synchronized void addPlayer(Player player, int id) {
+    public void setRecvMsgTime(int from, long time) {
+        synchronized (lastRecvMsg) {
+            lastRecvMsg.put(from, time);
+        }
+    }
+
+    public Map<Integer, Long> getLastRecvMsg() {
+        synchronized (lastRecvMsg) {
+            return lastRecvMsg;
+        }
+    }
+
+    public void addPlayer(Player player, int id) {
         playersMap.put(id, player);
         playersNumber++;
     }
 
-    public synchronized void removePlayer(int id) {
+    public void removePlayer(int id) {
         if (playersMap.remove(id) != null)
             playersNumber--;
     }
 
-    public synchronized Player findById(int id) {
+    public Player findById(int id) {
         return playersMap.get(id);
     }
 

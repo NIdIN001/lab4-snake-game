@@ -7,8 +7,8 @@ import game.Snake;
 import snakes.Snakes;
 import view.AvailableGamesList;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MessageHandler implements Runnable {
@@ -61,6 +61,9 @@ public class MessageHandler implements Runnable {
 
                 switch (message.getTypeCase()) {
                     case ANNOUNCEMENT -> {
+                        if (node.isInGame())
+                            break;
+
                         var msg = message.getAnnouncement();
                         Config cfg = new Config();
                         cfg.setDeadFoodProb(msg.getConfig().getDeadFoodProb());
@@ -78,10 +81,15 @@ public class MessageHandler implements Runnable {
                             gamesList.add(announce);
                     }
                     case ACK -> {
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
                     }
                     case JOIN -> {
+                        if (!node.isInGame())
+                            break;
+
                         System.out.println("get join");
                         var msg = message.getJoin();
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
 
                         Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.NORMAL, 0, message.getSenderId());
                         node.addPlayer(p, message.getSenderId());
@@ -91,10 +99,14 @@ public class MessageHandler implements Runnable {
                             //todo дать роль заместителя 2 игроку
                         }
 
-                        node.sendAck(task.message.getMsgSeq(), task.from);
+                        node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
                     }
                     case STATE -> {
+                        if (!node.isInGame())
+                            break;
+
                         var stateMessage = message.getState().getState();
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
 
                         List<Snakes.GameState.Coord> food = stateMessage.getFoodsList();
                         List<Point> foodPoints = new ArrayList<>();
@@ -118,22 +130,36 @@ public class MessageHandler implements Runnable {
                         }
 
                         node.getField().addSnakes(snakesList);
-                        node.sendAck(task.message.getMsgSeq(), task.from);
+                        node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
                     }
 
                     case ROLE_CHANGE -> {
+                        if (!node.isInGame())
+                            break;
+
                         var roleMessage = message.getRoleChange();
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
                         node.setRole(convertRoleFormat(roleMessage.getReceiverRole()));
-                        node.sendAck(task.message.getMsgSeq(), task.from);
+                        node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
                     }
 
                     case PING -> {
-                        node.sendAck(task.message.getMsgSeq(), task.from);
+                        System.out.println("Ping from: " + task.from.getHostName() + ":" + task.from.getPort());
+                        if (!node.isInGame())
+                            break;
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
+                        node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
                     }
 
                     case STEER -> {
+                        if (!node.isInGame())
+                            break;
+
                         System.out.println("get steer");
+
                         var msg = message.getSteer();
+                        node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
+
                         System.out.println("get steer from id:" + message.getSenderId());
                         System.out.println("ensable snakes: ");
                         for (var s : node.getField().getAliveSnakes()) {
@@ -145,7 +171,7 @@ public class MessageHandler implements Runnable {
                             case LEFT -> Direction.LEFT;
                             case RIGHT -> Direction.RIGHT;
                         });
-                        node.sendAck(task.message.getMsgSeq(), task.from);
+                        node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
                     }
                     case ERROR -> {
                     }

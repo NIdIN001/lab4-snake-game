@@ -28,7 +28,7 @@ public class AnnounceSender implements Runnable {
                 e.printStackTrace();
             }
             if (isWorking & node.getRole() == Role.MASTER)
-                socket.sendMulticast(factory.getInviteMsg());
+                socket.sendMulticast(factory.createInviteMsg());
         }
     }
 }
