@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class MessageFactory {
-    private MessagesCounter counter = new MessagesCounter();
     private Node node;
 
     public MessageFactory(Node node) {
@@ -134,7 +133,6 @@ public class MessageFactory {
                                         .build()).collect(Collectors.toList()))
                 .build();
 
-        //fixme save remote config
         return Snakes.GameMessage.newBuilder()
                 .setSenderId(node.getNodeId())
                 .setReceiverId(receiverId)
@@ -150,12 +148,13 @@ public class MessageFactory {
                 .build();
     }
 
-    public Snakes.GameMessage createAck() {
+    public Snakes.GameMessage createAck(long seq) {
         Snakes.GameMessage.AckMsg msg = Snakes.GameMessage.AckMsg.newBuilder()
                 .build();
 
         return Snakes.GameMessage.newBuilder()
                 .setAck(msg)
+                .setMsgSeq(seq)
                 .build();
     }
 

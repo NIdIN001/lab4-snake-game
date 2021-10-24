@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import net.GameAnnounce;
 import net.Node;
 import net.Role;
@@ -44,7 +43,6 @@ public class MenuSceneController implements Initializable {
 
     @FXML
     private void newGame(ActionEvent event) throws IOException {
-        //Node n = DependencyInjector.INSTANCE.injector.getInstance(Node.class);
         node.setRole(Role.MASTER);
         node.setField(new Field(node.getConfig(), node));
         node.getField().spawnMySnake(1);
@@ -91,6 +89,7 @@ public class MenuSceneController implements Initializable {
 
         node.connect("stas", addr);
         node.setRole(Role.NORMAL);
+
         for (GameAnnounce a : node.getAvailableGames().getMap().values()) {
             if (a.getFrom().equals(addr)) {
                 node.setField(new Field(a.getCfg(), node));
@@ -107,7 +106,6 @@ public class MenuSceneController implements Initializable {
             Stage primaryStage = (Stage) VBox.getScene().getWindow();
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
-            System.out.println("game scene");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,6 +122,5 @@ public class MenuSceneController implements Initializable {
                 Platform.runLater(() -> showAvalGames());
             }
         }, 0, 500);
-
     }
 }

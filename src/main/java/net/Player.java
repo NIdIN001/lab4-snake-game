@@ -1,6 +1,8 @@
 package net;
 
 public class Player {
+    private int lastRecvMsg;
+
     private String name;
     private int id;
     private String ipAddr;
@@ -54,6 +56,14 @@ public class Player {
 
     public int getScore() {
         return score;
+    }
+
+    public int getLastRecvMsg() {
+        return lastRecvMsg;
+    }
+
+    public void setLastRecvMsg(int lastRecvMsg) {
+        this.lastRecvMsg = lastRecvMsg;
     }
 }
 

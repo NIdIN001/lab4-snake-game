@@ -7,9 +7,7 @@ import game.Field;
 import view.AvailableGamesList;
 
 import java.net.InetSocketAddress;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.random.RandomGenerator;
 
 public class Node {
     private final int Port = 4446;
@@ -94,13 +92,12 @@ public class Node {
         this.config = config;
     }
 
-    public void createNewGame() {
-        isInGame = true;
+    public void setInGame(boolean inGame) {
+        isInGame = inGame;
     }
 
-    public void connectToRemoteGame(Config cfg) {
-        isInGame = true;
-        this.config = cfg;
+    public boolean isInGame() {
+        return isInGame;
     }
 
     public Field getField() {
@@ -135,7 +132,7 @@ public class Node {
     public void sendChanges() {
         for (Player p : playersRepository.getPlayers()) {
             senderSocket.sendUnicast(factory.createGameStateMessage(field, p.getId()), new InetSocketAddress(p.getIpAddr(), p.getPort()));
-            System.out.println("Send changes to: " + p.getIpAddr() + ":" + p.getPort());
+            //System.out.println("Send changes to: " + p.getIpAddr() + ":" + p.getPort());
         }
     }
 
@@ -143,8 +140,8 @@ public class Node {
         senderSocket.sendUnicast(factory.createSteerMessage(dir), remoteServer);
     }
 
-    public void sendAck() {
-        senderSocket.sendUnicast(factory.createAck(), remoteServer);
+    public void sendAck(long seq, InetSocketAddress to) {
+        senderSocket.sendUnicast(factory.createAck(seq), to);
     }
 
     public PlayersRepository getPlayersRepository() {

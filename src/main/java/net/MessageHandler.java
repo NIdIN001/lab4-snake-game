@@ -7,6 +7,7 @@ import game.Snake;
 import snakes.Snakes;
 import view.AvailableGamesList;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,6 @@ public class MessageHandler implements Runnable {
                             gamesList.add(announce);
                     }
                     case ACK -> {
-                        return;
                     }
                     case JOIN -> {
                         System.out.println("get join");
@@ -91,6 +91,7 @@ public class MessageHandler implements Runnable {
                             //todo дать роль заместителя 2 игроку
                         }
 
+                        node.sendAck(task.message.getMsgSeq(), task.from);
                     }
                     case STATE -> {
                         var stateMessage = message.getState().getState();
@@ -117,39 +118,38 @@ public class MessageHandler implements Runnable {
                         }
 
                         node.getField().addSnakes(snakesList);
+                        node.sendAck(task.message.getMsgSeq(), task.from);
                     }
 
                     case ROLE_CHANGE -> {
                         var roleMessage = message.getRoleChange();
                         node.setRole(convertRoleFormat(roleMessage.getReceiverRole()));
+                        node.sendAck(task.message.getMsgSeq(), task.from);
                     }
 
                     case PING -> {
-                        node.sendAck();
+                        node.sendAck(task.message.getMsgSeq(), task.from);
                     }
 
                     case STEER -> {
                         System.out.println("get steer");
                         var msg = message.getSteer();
-                        int id = message.getSenderId();
-                        System.out.println("get steer from id:" + id);
-                        var snakes = node.getField().getAliveSnakes();
+                        System.out.println("get steer from id:" + message.getSenderId());
                         System.out.println("ensable snakes: ");
-                        for (var s : snakes) {
+                        for (var s : node.getField().getAliveSnakes()) {
                             System.out.println(s.getPlayerId());
                         }
-                        node.getField().setDirectionToSnake(id, switch (msg.getDirection()) {
+                        node.getField().setDirectionToSnake(message.getSenderId(), switch (msg.getDirection()) {
                             case UP -> Direction.UP;
                             case DOWN -> Direction.DOWN;
                             case LEFT -> Direction.LEFT;
                             case RIGHT -> Direction.RIGHT;
                         });
+                        node.sendAck(task.message.getMsgSeq(), task.from);
                     }
                     case ERROR -> {
-                        return;
                     }
                     case TYPE_NOT_SET -> {
-                        return;
                     }
                 }
             }

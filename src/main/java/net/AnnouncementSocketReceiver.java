@@ -14,10 +14,7 @@ public class AnnouncementSocketReceiver implements Runnable {
 
     private MulticastSocket socket;
 
-    private boolean isRunning;
-
     public AnnouncementSocketReceiver(QueueMsg queueMsgToHandle) {
-        this.isRunning = true;
         this.queueMsgToHandle = queueMsgToHandle;
 
         try {
@@ -27,16 +24,12 @@ public class AnnouncementSocketReceiver implements Runnable {
         }
     }
 
-    public void setRunning(boolean running) {
-        isRunning = running;
-    }
-
     @Override
     public void run() {
         byte[] buffer = new byte[BufferSize];
 
         DatagramPacket dgram = new DatagramPacket(buffer, buffer.length);
-        while (isRunning) {
+        while (true) {
             try {
                 socket.receive(dgram); // blocks until a datagram is received
 

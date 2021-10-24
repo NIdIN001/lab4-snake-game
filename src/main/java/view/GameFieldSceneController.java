@@ -3,9 +3,6 @@ package view;
 import com.google.inject.Inject;
 import game.*;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -136,7 +133,6 @@ public class GameFieldSceneController implements Initializable {
         scoreLabel.setText("0");
         againButton.setDisable(true);
 
-        //fixme возможно это порочная практика и мне нужно по честному созвавать треды и убивать их при надобности
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override

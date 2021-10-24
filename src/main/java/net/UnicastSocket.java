@@ -19,7 +19,7 @@ public class UnicastSocket implements Runnable {
 
         try {
             socket = new DatagramSocket();
-            groupAddr = InetAddress.getByName("239.192.0.4");
+            groupAddr = InetAddress.getByName(ip);
         } catch (SocketException | UnknownHostException e) {
         }
     }

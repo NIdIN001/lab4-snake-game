@@ -3,7 +3,6 @@ package view;
 import net.GameAnnounce;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AvailableGamesList {
