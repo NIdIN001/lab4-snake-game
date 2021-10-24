@@ -174,6 +174,25 @@ public class MessageFactory {
                 .build();
     }
 
+    public Snakes.GameMessage createChangeRoleMessage(Snakes.NodeRole role, int receiverId) {
+        Snakes.GameMessage.RoleChangeMsg msg = Snakes.GameMessage.RoleChangeMsg.newBuilder()
+                .setSenderRole(switch (node.getRole()) {
+                    case MASTER -> Snakes.NodeRole.MASTER;
+                    case DEPUTY -> Snakes.NodeRole.DEPUTY;
+                    case NORMAL -> Snakes.NodeRole.NORMAL;
+                    case VIEWER -> Snakes.NodeRole.VIEWER;
+                })
+                .setReceiverRole(role)
+                .build();
+
+        return Snakes.GameMessage.newBuilder()
+                .setRoleChange(msg)
+                .setMsgSeq(MessagesCounter.next())
+                .setSenderId(node.getNodeId())
+                .setReceiverId(receiverId)
+                .build();
+    }
+
 
     private Snakes.GameState.Coord coord(int x, int y) {
         return Snakes.GameState.Coord.newBuilder().setX(x).setY(y).build();

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import game.Config;
 import game.Direction;
 import game.Field;
+import snakes.Snakes;
 import view.AvailableGamesList;
 
 import java.net.InetSocketAddress;
@@ -80,7 +81,7 @@ public class Node {
         unicastThreadListen.setDaemon(true);
         unicastThreadListen.start();
 
-        disconnectUserMonitor = new DisconnectUserMonitor(playersRepository);
+        disconnectUserMonitor = new DisconnectUserMonitor(playersRepository, this);
 
         disconnectMonitorThread = new Thread(disconnectUserMonitor);
         disconnectMonitorThread.setDaemon(true);
@@ -169,5 +170,9 @@ public class Node {
 
     public void setRemoteServerId(int remoteServerId) {
         this.remoteServerId = remoteServerId;
+    }
+
+    public void sendRoleChangeMsg(Snakes.NodeRole role, InetSocketAddress to, int remoteId) {
+        senderSocket.sendUnicast(factory.createChangeRoleMessage(role, remoteId), to);
     }
 }

@@ -1,7 +1,6 @@
 package net;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +12,10 @@ public class PlayersRepository {
 
     public Collection<Player> getPlayers() {
         return playersMap.values();
+    }
+
+    public Player getFirstPlayer() {
+        return playersMap.values().iterator().next();
     }
 
     public void setRecvMsgTime(int from, long time) {

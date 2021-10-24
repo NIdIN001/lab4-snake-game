@@ -9,11 +9,6 @@ import view.DependencyInjector;
 
 import java.io.IOException;
 
-/*
-fixme баг когда выходишь из игры announcer продолжает слать инвайты
-fixme баг с выходами из сессии
-*/
-
 public class JavaFXRunner extends Application {
     public static void main(String[] args) {
         launch(args);

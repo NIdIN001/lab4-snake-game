@@ -93,10 +93,11 @@ public class MessageHandler implements Runnable {
 
                         Player p = new Player(msg.getName(), PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.NORMAL, 0, message.getSenderId());
                         node.addPlayer(p, message.getSenderId());
-                        node.getField().spawnNewSnake(msg.getName(), message.getSenderId());
+                        if (node.getField().findSnakeById(message.getSenderId()) == null)
+                            node.getField().spawnNewSnake(msg.getName(), message.getSenderId());
 
-                        if (node.getPlayersRepository().getPlayersNumber() == 2) {
-                            //todo дать роль заместителя 2 игроку
+                        if (node.getPlayersRepository().getPlayersNumber() == 1) {
+                            node.sendRoleChangeMsg(Snakes.NodeRole.DEPUTY, task.from, task.message.getSenderId());
                         }
 
                         node.sendAck(task.message.getMsgSeq(), task.from, task.message.getSenderId());
@@ -106,6 +107,7 @@ public class MessageHandler implements Runnable {
                             break;
 
                         var stateMessage = message.getState().getState();
+                        node.getPlayersRepository().addPlayer(new Player("admin", PlayerType.HUMAN, task.from.getHostName(), task.from.getPort(), Role.MASTER, 0, message.getSenderId()), message.getSenderId());
                         node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());
 
                         List<Snakes.GameState.Coord> food = stateMessage.getFoodsList();
@@ -126,7 +128,8 @@ public class MessageHandler implements Runnable {
                                     .map(this::convertPointFormat)
                                     .toList();
 
-                            snakesList.add(new Snake(body, convertDirectionFormat(s.getHeadDirection()), node.getField(), s.getPlayerId()));
+                            ArrayList<Point> tmp = new ArrayList<>(body);
+                            snakesList.add(new Snake(tmp, convertDirectionFormat(s.getHeadDirection()), node.getField(), s.getPlayerId()));
                         }
 
                         node.getField().addSnakes(snakesList);
@@ -144,7 +147,8 @@ public class MessageHandler implements Runnable {
                     }
 
                     case PING -> {
-                        System.out.println("Ping from: " + task.from.getHostName() + ":" + task.from.getPort());
+                        //System.out.println("Ping from: " + task.from.getHostName() + ":" + task.from.getPort());
+                        System.out.println(node.getRole().toString());
                         if (!node.isInGame())
                             break;
                         node.getPlayersRepository().setRecvMsgTime(message.getSenderId(), Calendar.getInstance().getTime().getTime());

@@ -67,7 +67,8 @@ public class GameFieldSceneController implements Initializable {
 
     @FXML
     private void again(ActionEvent action) {
-        node.getField().spawnMySnake(1);
+        //node.getField().spawnMySnake(node.getNodeId());
+        node.getField().spawnNewSnake("Admin", node.getNodeId());
         againButton.setDisable(true);
     }
 
@@ -75,28 +76,32 @@ public class GameFieldSceneController implements Initializable {
     private void keyProcessor(KeyEvent event) {
         if (event.getCode().equals(KeyCode.W)) {
             if (node.getRole() == Role.MASTER)
-                node.getField().setDirectionToMySnake(Direction.UP);
+                //node.getField().setDirectionToMySnake(Direction.UP);
+                node.getField().setDirectionToSnake(node.getNodeId(), Direction.UP);
             else
                 node.sendDirection(Direction.UP);
         }
 
         if (event.getCode().equals(KeyCode.A)) {
             if (node.getRole() == Role.MASTER)
-                node.getField().setDirectionToMySnake(Direction.LEFT);
+                //node.getField().setDirectionToMySnake(Direction.LEFT);
+                node.getField().setDirectionToSnake(node.getNodeId(), Direction.LEFT);
             else
                 node.sendDirection(Direction.LEFT);
         }
 
         if (event.getCode().equals(KeyCode.S)) {
             if (node.getRole() == Role.MASTER)
-                node.getField().setDirectionToMySnake(Direction.DOWN);
+                // node.getField().setDirectionToMySnake(Direction.DOWN);
+                node.getField().setDirectionToSnake(node.getNodeId(), Direction.DOWN);
             else
                 node.sendDirection(Direction.DOWN);
         }
 
         if (event.getCode().equals(KeyCode.D)) {
             if (node.getRole() == Role.MASTER)
-                node.getField().setDirectionToMySnake(Direction.RIGHT);
+                //node.getField().setDirectionToMySnake(Direction.RIGHT);
+                node.getField().setDirectionToSnake(node.getNodeId(), Direction.RIGHT);
             else
                 node.sendDirection(Direction.RIGHT);
         }
@@ -180,12 +185,12 @@ public class GameFieldSceneController implements Initializable {
         setEatColour(Color.RED);
         setSnakesColour(Color.GREEN);
 
-        if (node.getField().getMySnake() != null) {
-            scoreLabel.setText(String.valueOf(node.getField().getMySnake().getScore()));
+        if (node.getField().findSnakeById(node.getNodeId()) != null) {
+            scoreLabel.setText(String.valueOf(node.getField().findSnakeById(node.getNodeId()).getScore()));
         } else
             return;
 
-        if (node.getField().getMySnake().getState() == SnakeState.ZOMBIE) {
+        if (node.getField().findSnakeById(node.getNodeId()).getState() == SnakeState.ZOMBIE) {
             againButton.setDisable(false);
         }
     }

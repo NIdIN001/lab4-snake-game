@@ -46,7 +46,8 @@ public class MenuSceneController implements Initializable {
         node.setInGame(true);
         node.setRole(Role.MASTER);
         node.setField(new Field(node.getConfig(), node));
-        node.getField().spawnMySnake(1);
+        //node.getField().spawnMySnake(node.getNodeId());
+        node.getField().spawnNewSnake("Admin", node.getNodeId());
         for (int i = 0; i < node.getConfig().getFoodStatic(); i++)
             node.getField().spawnNewEat();
 

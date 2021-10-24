@@ -11,18 +11,15 @@ public class Field {
     private Config config;
 
     private List<Snake> aliveSnakes;
-    private Snake mySnake;
-    private int nextId = 0;
 
     private List<Point> eatPoints;
     private int maxEatOnMap;
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
+    private final Random random = new Random();
 
     private Node thisNode;
-
-    private Random random = new Random();
 
     public Field(Config config, Node node) {
         thisNode = node;
@@ -33,13 +30,13 @@ public class Field {
 
         this.width = config.getWidth();
         this.height = config.getHeight();
-        this.maxEatOnMap = config.getFoodStatic();
+        this.maxEatOnMap = (config.getFoodStatic() + config.getFoodPerPlayer() * (aliveSnakes.size()));
     }
 
     public Snake findSnakeById(int id) {
         return aliveSnakes.stream()
                 .filter(snake -> snake.getPlayerId() == id)
-                .findFirst().orElseThrow();
+                .findFirst().orElse(null);
     }
 
 
@@ -60,10 +57,6 @@ public class Field {
         return false;
     }
 
-    public Snake getMySnake() {
-        return mySnake;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -74,15 +67,6 @@ public class Field {
 
     public void spawnNewSnake(String name, int id) {
         aliveSnakes.add(new Snake(findPosForNewSnake(), Direction.RIGHT, this, id));
-    }
-
-    public void spawnMySnake(int id) {
-        mySnake = new Snake(findPosForNewSnake(), Direction.RIGHT, this, id);
-        aliveSnakes.add(mySnake);
-    }
-
-    public void setDirectionToMySnake(Direction dir) {
-        mySnake.setDirection(dir);
     }
 
     public void setDirectionToSnake(int snakeId, Direction dir) {
@@ -169,8 +153,8 @@ public class Field {
         deathSnakes.clear();
     }
 
-    private List<Point> findPosForNewSnake() {
-        List<Point> points = new ArrayList<>();
+    private ArrayList<Point> findPosForNewSnake() {
+        ArrayList<Point> points = new ArrayList<>();
         points.add(new Point(5, 5));
         points.add(new Point(5, 4));
         return points;
@@ -196,6 +180,7 @@ public class Field {
     }
 
     public void addSnakes(List<Snake> snakes) {
+        maxEatOnMap = (config.getFoodStatic() + config.getFoodPerPlayer() * (snakes.size()));
         aliveSnakes = snakes;
     }
 }

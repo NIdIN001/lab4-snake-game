@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Snake {
-    private final int DefaultLength = 2;
     private final int Head = 0;
     private int score;
 
@@ -16,10 +15,10 @@ public class Snake {
     private final int playerId;
 
     /* координата головы - points[0] */
-    private List<Point> body;
+    private ArrayList<Point> body;
     private final Field field;
 
-    public Snake(List<Point> beginPos, Direction beginDir, Field field, int id) {
+    public Snake(ArrayList<Point> beginPos, Direction beginDir, Field field, int id) {
         score = 0;
         body = new ArrayList<>();
 
